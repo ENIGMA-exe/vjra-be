@@ -8,7 +8,7 @@ const bcrypt = require('bcrypt');
 const user = require('./src/models/ud_model');
 const API = require('./src/models/api_model');
 
-const port = process.env.PORT || 3131;
+const port = process.env.PORT || 5000;
 
 //db
 const mongo_conn = require('./src/db/config.js');
@@ -114,7 +114,7 @@ app.post('/api/add_admins', async(req,res)=>{
 
 // ..........................USER END POINT.............................
 
-//.................GEST USER DATA.........................
+//.................GET USER DATA.........................
 app.get('/user_details', async (req, res) => {
     try {
         var result = await user.find();
@@ -125,8 +125,8 @@ app.get('/user_details', async (req, res) => {
     }
 })
 
-//...............RESGISTER USER DATA.........................
-app.post('/user_details', async (req, res) => {
+//...............RESGISTER USER DATA / SIGNUP.........................
+app.post('/user_detail', async (req, res) => {
     try {
 
         var user_data = new user(req.body);
@@ -147,39 +147,29 @@ app.post('/user_details', async (req, res) => {
                 } 
             });
         })
-        await API.updateOne({ id: "API_HARBOUR_01" }, { $set: { total_user: api_detail[0].total_user + 1 } });
-        res.status(201).send('saved successfully \n');
+        await API.updateOne({ id: "API_POKEMON_01" }, { $set: { total_user: api_detail[0].total_user + 1 } });
+        res.status(201).send('saved successfully');
         
 
     } catch (error) {
         //422 = Unprocessable Entity
-        res.status(422).send('error in saving \n' + error);
+        res.status(422).send('error in saving' + error);
     }
 })
 
-//...............PUSH USER POST.........................
-
-app.post('/post/:userid', async (req,res)=>{
+//...............PUSHED FAVOURITE POKI ID.....................
+app.post('/:userID/:pid',async (req,res)=>{
     try {
+        // var result = await user.findOne({email:req.params.userID})
+
         await user.updateOne(
-            {user_id:req.params.userid},
-            {$push:{post:req.body}}
+            {user_id:req.params.userID},
+            {$push:{fpid:req.params.pid}}
         )
-        res.status(201).send(`post added successfully`)
+        res.status(201).send(`Added to your profile`)
     } catch (err) {
-        res.status(400).send('error in post added \n'+err);
+        res.status(400).send('error in adding');
     }
-})
-
-//...............FIND USER BASED ON LOCATION.........................
-app.get('/location/:place', async(req,res)=>{
-    try {
-        var result = await user.find().elemMatch("post",{"location":req.params.place});
-        res.status(200).send(result)
-    } catch (err) {
-        res.status(400).send('error in found \n'+err);
-    }
-    
 })
 //...............FIND USER BASED ON ID.........................
 app.get('/user/:id',async(req,res)=>{
@@ -193,17 +183,22 @@ app.get('/user/:id',async(req,res)=>{
 })
 
 //.................USER LOGIN.....................................
-app.post('/user/login',async(req,res)=>{
+app.post('/login',async(req,res)=>{
     // console.log(req.body);
 
     var result = await user.find({email:req.body.email});
     // console.log(result[0]);
     if(result.length != 0){
         bcrypt.compare(req.body.pwd, result[0].pwd, (err, data) => {
-            // res == true or res == false
+            // data == true or data == false
             if(err){
-                res.send(result[0].user_id);
-            }else{res.send(data);}
+                res.send(err);
+            }else{
+                // res.send(result);
+                if(data===true){
+                    res.status(200).send(result);
+                }else('invalid');
+            }
         })
     }else{
         res.send('invalid')
@@ -212,9 +207,6 @@ app.post('/user/login',async(req,res)=>{
 
 
 
-
-
-
 app.listen(port, (req, res) => {
-    // console.log(`server running @ localhost:${port}`)
+    console.log(`server running @ localhost:${port}`)
 })

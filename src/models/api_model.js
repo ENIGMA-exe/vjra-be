@@ -3,11 +3,11 @@ const mongoose = require('mongoose');
 const api_schema = mongoose.Schema({
     id:{
         type:String,
-        default:'API_HARBOUR_01',
+        default:'API_POKEMON_01',
     },
     name:{
         type:String,
-        default:'Harbour_BACKEND_V1',
+        default:'POKEMON_BACKEND_V1',
     },
     version:{
         type:mongoose.Decimal128,

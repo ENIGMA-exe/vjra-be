@@ -3,8 +3,9 @@ const mongoose = require('mongoose');
 
 //database:- test;
 const mongo_connection = ()=>{
-    // const DV_URL = "mongodb://localhost:27017/Harbour";
-    mongoose.connect(process.env.MY_DB_URL,{
+    const DV_URL = "mongodb://localhost:27017/Pokemon";
+    //process.env.MY_DB_URL
+    mongoose.connect(DV_URL,{
         useNewUrlParser:true,
         useUnifiedTopology:true
         // useFindAndModify:false,

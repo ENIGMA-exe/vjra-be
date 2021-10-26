@@ -8,13 +8,9 @@ const ud_schema = mongoose.Schema({
         type:String,
         default:"user_"
     },
-    fname:{
+    name:{
         type:String,
         require:[true,'no fname found']
-    },
-    lname:{
-        type:String,
-        require:[true,'no lname found']
     },
     email:{
         type:String,
@@ -30,22 +26,8 @@ const ud_schema = mongoose.Schema({
         type:String,
         require:[true,'password must be there.']
     },
-    post:{
-        type:Array,
-        default:[]
-        // default:[{
-        //     lat:'none',
-        //     long:'none',
-        //     data:'none',
-        //     location:'none',
-        //     img_url:'none',
-        //     description:'none'
-        // }]
-    },
-    follower:{
-        type:Array,
-        default:[  ]
-    }
+    favourite:{type:Array,default:[]},
+    
 });
 
 ud_schema.pre("save",async function(next){
